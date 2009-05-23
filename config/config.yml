@@ -1,0 +1,8 @@
+development:
+    foo: development-foobar
+
+deployment:
+    foo: deployment-foobar
+    
+test:
+    foo: test-foobar
