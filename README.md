@@ -10,9 +10,11 @@ To avoid polluting global namespaces, everything is packed inside a `MyApp` modu
 
 - `MyApp::Controllers` in `init.rb` and `app/controllers.rb`
 - `MyApp::Helpers` in `init.rb` and `app/helpers.rb`
-- `MyApp::Application` in `config.ru` and `test/test_helper.rb`
+- `MyApp::Application` in `config.ru`, `test/test_helper.rb` and `features/support/env.rb`
 
-Database connection should be configured in `init.rb` from the `CONFIG` configuration, which is read from `config/config.yml`
+Configuring the application
+---------------------------
+The template reads the app config from `config/config.yml` in the `initialize` method at `init.rb`.
 
 Start
 -----
@@ -26,13 +28,22 @@ You can set the environment mode in `config.ru` with
 
 Adding helper or controller files
 ---------------------------------
-You can create a `app/helpers` directory with modules inside and include all of them into the current helpers/controller module.
+You can create a `app/helpers` directory with modules inside and include all of them into the current helpers module at `app/helpers.rb`.
+The same applies for controllers.
+
+Testing
+-------
+If you don't test your apps _(which is a bad thing, TAFT FTW!)_ feel free to delete `features` and `test` directories.
+
+The template includes ready to use helpers to start testing your application with Test::Unit and Cucumber. Both of them make the Rack::Test available in your tests.
+
+It also includes working examples, which could be useful as a starting point.
+
+Disclaimer: I'm learning Cucumber, if you have any suggestions please let me know.
 
 License
 -------
-Raul Murciano http://murciano.net
-
-Copyright (c) 2009 Released under the MIT license (see MIT-LICENSE)
+[Raul Murciano](http://raul.murciano.net) Copyright (c) 2009 Released under the MIT license (see MIT-LICENSE)
 
 Credits
 -------
