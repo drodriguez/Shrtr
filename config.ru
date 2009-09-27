@@ -2,4 +2,4 @@
 
 require 'init'
 
-run MyApp::Application.new
+run Shrtr::Application.new

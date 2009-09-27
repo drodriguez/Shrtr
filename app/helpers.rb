@@ -1,5 +1,5 @@
 
-module MyApp
+module Shrtr
   
   module Helpers
     def upcase(str)

@@ -3,7 +3,7 @@ require 'rack'
 require 'sinatra'
 require 'logger'
 
-module MyApp
+module Shrtr
 
   ROOT_DIR = File.join File.expand_path(File.dirname(__FILE__)) 
 
@@ -23,8 +23,8 @@ module MyApp
     end
 
     set :views, File.join(ROOT_DIR, 'app', 'views')
-    helpers{ include MyApp::Helpers }
-    include MyApp::Controllers
+    helpers{ include Shrtr::Helpers }
+    include Shrtr::Controllers
 
     protected
     

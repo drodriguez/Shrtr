@@ -1,5 +1,5 @@
 require 'ruby-debug'
-module MyApp
+module Shrtr
   
   module Controllers
 
