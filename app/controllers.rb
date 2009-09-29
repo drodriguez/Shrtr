@@ -19,7 +19,8 @@ module Shrtr
     end
     
     before do
-      if request.path =~ /^\/-shrtr-\⁄/
+      if request.path =~ /^\/-shrtr-\⁄/ and
+        not request.path =~ /^\/-shrtr-\⁄login/
         authenticate
       end
     end
@@ -37,6 +38,8 @@ module Shrtr
         else
           haml :done
         end
+      else
+        haml :add
       end
     end
     
@@ -57,12 +60,22 @@ module Shrtr
       end
     end
     
-    post '/-shrtr-/logout' do
-      
+    get '/-shrtr-/logout' do
+      haml :logout
     end
     
-    get '/:key' do
-      
+    post '/-shrtr-/logout' do
+      sign_out
+      redirect '/-shrtr-/login'
+    end
+    
+    get '/:id' do
+      unless params['id'].empty?
+        url = Shrtr::URL.find_by_shrtr_id(params['id'])
+        redirect url.url if url
+      else
+        redirect '/-shrtr-/'
+      end
     end
     
     private
@@ -91,7 +104,7 @@ module Shrtr
         current_user = user
       end
     end
-    
+        
     def sign_out
       set_cookie('remember_token', :value = '',
         :expires => 1.day.ago.utc)
