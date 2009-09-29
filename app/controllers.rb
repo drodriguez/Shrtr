@@ -106,7 +106,7 @@ module Shrtr
     end
         
     def sign_out
-      set_cookie('remember_token', :value = '',
+      set_cookie('remember_token', :value => '',
         :expires => 1.day.ago.utc)
       current_user = nil
     end
