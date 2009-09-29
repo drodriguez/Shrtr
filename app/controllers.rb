@@ -1,5 +1,6 @@
 require 'ruby-debug'
 require 'digest/sha1'
+require 'active_support'
 
 module Shrtr
   
@@ -9,26 +10,18 @@ module Shrtr
     
     before do
       Shrtr::URL.connect!(@config['db'])
-=begin
-      if params['username']
-        @valid_user = params['username'] == @config['username'] &&
-          Digest::SHA1.hexdigest(params['password']) == @config['password']
-      elsif params['api']
-        @valid_user = params['api'] == @config['api_key']
+    end
+    
+    before do
+      Shrtr::User.username = @config['user']['username']
+      Shrtr::User.password = @config['user']['password']
+      Shrtr::User.api_key = @config['user']['api_key']
+    end
+    
+    before do
+      if request.path =~ /^\/-shrtr-\⁄/
+        authenticate
       end
-      
-      if params['logout']
-        session['username'] = session['password'] = ''
-        redirect '/-shrtr-/'
-      end
-      
-      if not @valid_user
-        halt haml(:login)
-      elsif not params['api']
-        session['username'] = @config['username']
-        session['password'] = @config['password']
-      end
-=end
     end
 
     get '/-shrtr-/' do
@@ -52,8 +45,16 @@ module Shrtr
     end
     
     post '/-shrtr-/login' do
-      @valid_user = params['username'] == @config['username'] &&
-        Digest::SHA1.hexdigest(params['password']) == @config['password']
+      @user = Shrtr::User.authenticate(params['username'],
+        params['password'])
+      
+      if @user.nil?
+        @flash = 'Bad username or password!'
+        status 401 # unauthorized
+        haml :login
+      else
+        redirect '/-shrtr-/'
+      end
     end
     
     post '/-shrtr-/logout' do
@@ -66,10 +67,51 @@ module Shrtr
     
     private
     
-    def cookie_value
-      @cookie_value ||= "#{@config['username']}#{@config['password']}#{@config['cookie_salt']}"
+    def current_user
+      @current_user ||= user_from_cookie || user_from_api
     end
     
-  end
-  
+    def current_user=(user)
+      @current_user = user
+    end
+    
+    def signed_in?
+      !current_user.nil?
+    end
+    
+    def authenticate
+      deny_access unless signed_in?
+    end
+    
+    def sign_in(user)
+      if user
+        user.dont_you_forget_about_me
+        set_cookie('remember_token', :value => user.remember_token,
+          :expires => 1.year.from_now.utc)
+        current_user = user
+      end
+    end
+    
+    def sign_out
+      set_cookie('remember_token', :value = '',
+        :expires => 1.day.ago.utc)
+      current_user = nil
+    end
+    
+    def deny_access
+      redirect '/-shrtr-/login'
+    end
+    
+    def user_from_cookie
+      if token = request.cookies['remember_token']
+        Shrtr::User.authenticate_by_remember_token(token)
+      end
+    end
+    
+    def user_from_api
+      if key = params['api']
+        Shrtr::User.authenticate_by_api(key)
+      end
+    end
+  end  
 end
