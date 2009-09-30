@@ -3,9 +3,14 @@ require 'digest/sha1'
 module Shrtr
   class User
     class << self
+      attr :db
       attr_writer :username
       attr_writer :password
       attr_writer :api_key
+      
+      def connect!(db)
+        @db ||= db
+      end
       
       def authenticate(username, password)
         user = self.create_user(username)
@@ -13,13 +18,13 @@ module Shrtr
       end
       
       def authenticate_by_remember_token(token)
-        if @db['user:remember_token'] == token
-          self.create_user
+        if @db.execute { |db| db['user:remember_token'] } == token
+          self.create_user(@username)
         end
       end
       
-      def authenticate_by_api_key(key)
-        user = self.create_user
+      def authenticate_by_api(key)
+        user = self.create_user(@username)
         return user if user.api_authenticated?(key)
       end
       
@@ -44,11 +49,11 @@ module Shrtr
     end
     
     def dont_you_forget_about_me
-      self.remember_token = Digest::SHA1.hexdigest("--#{Time.now.utc}--#{encrypted_password}--")
+      self.remember_token = Digest::SHA1.hexdigest("--#{Time.now.utc}--#{@password}--")
     end
     
     def remember_token=(value)
-      @db['user:remember_token'] = @remember_token = value
+      Shrtr::User.db.execute { |db| db['user:remember_token'] = @remember_token = value }
     end
   end
 end
