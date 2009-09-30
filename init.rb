@@ -2,6 +2,8 @@ require 'rubygems'
 require 'rack'
 require 'sinatra'
 require 'logger'
+require 'rufus/tokyo'
+require 'haml'
 
 module Shrtr
 
@@ -18,7 +20,15 @@ module Shrtr
 
     def initialize(*params)
       read_config
-      # setup_db, etc here
+      
+      @db ||= Shrtr::TokyoBackend.new(File.join(ROOT_DIR, @config['db']['name']))
+      Shrtr::URL.connect!(@db)
+      Shrtr::User.connect!(@db)
+
+      Shrtr::User.username = @config['user']['username']
+      Shrtr::User.password = @config['user']['password']
+      Shrtr::User.api_key = @config['user']['api_key']
+      
       super
     end
 
@@ -35,4 +45,8 @@ module Shrtr
 
   end
 
+end
+
+if $0 == __FILE__
+  
 end

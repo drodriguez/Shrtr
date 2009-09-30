@@ -7,21 +7,12 @@ module Shrtr
   module Controllers
     
     set :sessions, true
-    
+        
     before do
-      Shrtr::URL.connect!(@config['db'])
-    end
-    
-    before do
-      Shrtr::User.username = @config['user']['username']
-      Shrtr::User.password = @config['user']['password']
-      Shrtr::User.api_key = @config['user']['api_key']
-    end
-    
-    before do
-      if request.path =~ /^\/-shrtr-\⁄/ and
-        not request.path =~ /^\/-shrtr-\⁄login/
-        authenticate
+      if (/^\/-shrtr-\// =~ request.path) != nil
+        if (/^\/-shrtr-\/login/ =~ request.path) == nil
+          authenticate
+        end
       end
     end
 
@@ -56,6 +47,7 @@ module Shrtr
         status 401 # unauthorized
         haml :login
       else
+        sign_in(@user)
         redirect '/-shrtr-/'
       end
     end
@@ -73,9 +65,12 @@ module Shrtr
       unless params['id'].empty?
         url = Shrtr::URL.find_by_shrtr_id(params['id'])
         redirect url.url if url
-      else
-        redirect '/-shrtr-/'
       end
+      redirect '/-shrtr-/'
+    end
+    
+    get '/' do
+      redirect '/-shrtr-/'
     end
     
     private
