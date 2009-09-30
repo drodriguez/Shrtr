@@ -1,4 +1,5 @@
 require 'uri'
+require 'rufus/tokyo'
 
 module Shrtr
   include URI::Escape
@@ -8,7 +9,7 @@ module Shrtr
       attr :db
       
       def connect!(conf)
-        @db = Rufus::Tokyo::Cabinet.new(conf['dbname'])
+        @db = Rufus::Tokyo::Cabinet.new(File.join(ROOT_DIR, conf['name']))
       end
       
       def find_by_url(url)

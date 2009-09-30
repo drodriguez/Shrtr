@@ -3,9 +3,9 @@ require 'digest/sha1'
 module Shrtr
   class User
     class << self
-      attr :username
-      attr :password
-      attr :api_key
+      attr_writer :username
+      attr_writer :password
+      attr_writer :api_key
       
       def authenticate(username, password)
         user = self.create_user(username)
