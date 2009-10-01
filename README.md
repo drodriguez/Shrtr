@@ -1,52 +1,27 @@
-Sinatra Template
-================
-Template for medium-sized applications based on Sinatra.
+Shrtr
+=====
 
-It's inspired by Rails as it's a well-known structure - but it's NOT Rails! ;)
+Shrtr is a personal web service to short URLs and have a shorter link
+that will redirect the user to the longer URL. Ideal for IM, IRC and
+email. Do you know http://bit.ly ? Well, it's the same, but personal,
+and without all the statistics.
 
-Application name
-----------------
-To avoid polluting global namespaces, everything is packed inside a `MyApp` module, so you may consider renaming the `MyApp` module stored in `init.rb` and its derivatives:
-
-- `MyApp::Controllers` in `init.rb` and `app/controllers.rb`
-- `MyApp::Helpers` in `init.rb` and `app/helpers.rb`
-- `MyApp::Application` in `config.ru`, `test/test_helper.rb` and `features/support/env.rb`
-
-Configuring the application
----------------------------
-The template reads the app config from `config/config.yml` in the `initialize` method at `init.rb`.
-
-Start
------
-Start the application in the port 4567 with:
-
-    rackup -p 4567
-
-You can set the environment mode in `config.ru` with 
-
-    ENV['RACK_ENV'] = 'deployment'
-
-Adding helper or controller files
----------------------------------
-You can create a `app/helpers` directory with modules inside and include all of them into the current helpers module at `app/helpers.rb`.
-The same applies for controllers.
-
-Testing
--------
-If you don't test your apps _(which is a bad thing, TAFT FTW!)_ feel free to delete `features` and `test` directories.
-
-The template includes ready to use helpers to start testing your application with Test::Unit and Cucumber. Both of them make the Rack::Test available in your tests.
-
-It also includes working examples, which could be useful as a starting point.
-
-Disclaimer: I'm learning Cucumber, if you have any suggestions please let me know.
+Ideally it should be running in http://shr.tr, but Turkey do not allow
+second-level registrations, so it will be never there.
 
 License
 -------
-[Raul Murciano](http://raul.murciano.net) Copyright (c) 2009 Released under the MIT license (see MIT-LICENSE)
+
+Copyright Daniel Rodríguez Troitiño (c) 2009.
+Released under the MIT license (see MIT-LICENSE)
 
 Credits
 -------
-This is a mere bunch of files and dirs, actual credits correspond to the awesome brains behind Sinatra and Rack projects. 
 
-Thank you very very very much to all of them!!!
+Sinatra template based on http://github.com/raul/sinatra_template.
+
+Shrtr is heavily inspired in
+[Lessn](http://www.shauninman.com/archive/2009/08/17/less_n), but I
+wanted to reimplement it using Sinatra and play along with Tokyo
+Cabinet. If you want a completed service, maybe lessn is better for your
+needs (Shrtr is complete, but rought in the edges).
